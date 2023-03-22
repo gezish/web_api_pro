@@ -1,22 +1,27 @@
-from flask import Flask, jsonify, request
+from flask import Flask, request, render_template, redirect
 
-# Intitialise the app
 app = Flask(__name__)
-# Define what the app does
-@app.get("/greet")
+
+@app.get("/")
 def index():
-    fname = request.args.get("fname")
-    lname = request.args.get("lname")
+    return render_template("index.html")
+    """
+    TODO: Render the home page provided under templates/index.html in the repository
+    """
+    return "TODO"
 
-    if not fname and not lname:
-        return jsonify({"status" : "error"})
-    elif fname and not lname:
-        response = {"data" : f"Hello, {fname} !"}
-    elif not fname and lname:
-        response = {"data" : f"Hello, Mr. {lname} ?"}
-    else:
-        response = {"data" : f"Is your name , {fname} {lname} ?"}
-    
-    return jsonify(response)
+@app.get("/search")
+def search():
+    args = request.args.get("q")
+    return redirect(f"https://www.oxfordlearnersdictionaries.com/definition/english/?q={args}")
 
-    
+@app.get("/registration")
+def register():
+    return render_template("registration.html")
+    """
+    TODO: Render the home page provided under templates/index.html in the repository
+    """
+    return "TODO"
+
+if __name__ == "__main__":
+    app.run()
