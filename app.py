@@ -18,6 +18,8 @@ def index():
 
 
 @app.get("/dict")
+
+
 def dictionary():
     """
     DEFAULT ROUTE
@@ -26,21 +28,27 @@ def dictionary():
     2. Try to find an exact match, and return it if found
     3. If not found, find all approximate matches and return
     """
-    word = request.args.get("word")
-    if not word:
-        return jsonify({"status": "error", "data": "Word not Found"})
+    words = request.args.getlist("word")
+    if not words:
+        response = {"status": "error", "word": "words","data": "Word not Found"}
+        return jsonify(response)
 
-    definitions = match_exact(word)
-    if definitions:
-        return jsonify({"status": "success", "data": definitions})
-    
-    definitions = match_like(word)
-    if definitions:
-        return jsonify({"status": "partial", "data": definitions})
-    else:
-        return jsonify({"status": "error", "data":"word not found"})
- 
+    response = {"words":[]}   
+    for word in words:
 
+        definitions = match_exact(word)
+
+        if definitions:
+            response["words"].append({"status": "success", "data": definitions,"words":word})
+        else:
+            definitions = match_like(word)
+            if definitions:
+                response["words"].append({"status": "partial", "data": definitions, "words":word})
+            else:
+                response["words"].append({"status": "error", "data":"word not found","word": "words"})
+    return jsonify(response)
+
+       
 
 if __name__ == "__main__":
     app.run()
